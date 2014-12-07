@@ -3,11 +3,15 @@ package snapshot
 import (
 	"errors"
 	"github.com/puffinframework/config"
+	"github.com/syndtr/goleveldb/leveldb"
+	leveldbErrors "github.com/syndtr/goleveldb/leveldb/errors"
 	"labix.org/v2/mgo/bson"
+	"log"
 )
 
 var (
 	ErrOpenDB            error = errors.New("snapshot: couldn't open database")
+	ErrCloseDB           error = errors.New("snapshot: couldn't close database")
 	ErrGetSnapshot       error = errors.New("snapshot: couldn't get the snapshot from the db")
 	ErrPutSnapshot       error = errors.New("snapshot: couldn't put the snapshot from the db")
 	ErrUnmarshalSnapshot error = errors.New("snapshot: couldn't unmarshal the snapshot")
@@ -15,9 +19,9 @@ var (
 )
 
 type Store interface {
-	LoadSnapshot(key string, snapshot interface{})
-	SaveSnapshot(key string, snapshot interface{})
-	Close()
+	MustLoadSnapshot(key string, snapshot interface{})
+	MustSaveSnapshot(key string, snapshot interface{})
+	MustClose()
 }
 
 type leveldbStoreConfig struct {
@@ -28,7 +32,7 @@ type leveldbStore struct {
 	db *leveldb.DB
 }
 
-func NewLeveldbStore() *Store {
+func NewLeveldbStore() Store {
 	cfg := &leveldbStoreConfig{}
 	config.MustReadConfig(cfg)
 
@@ -40,32 +44,28 @@ func NewLeveldbStore() *Store {
 	return &leveldbStore{db: db}
 }
 
-func (self *leveldbStore) LoadSnapshot(key string, snapshot interface{}) error {
+func (self *leveldbStore) MustLoadSnapshot(key string, snapshot interface{}) {
 	value, err := self.db.Get([]byte(key), nil)
-	if err != nil {
-		return ErrGetSnapshot
+	if err != nil && err != leveldbErrors.ErrNotFound {
+		log.Panic(ErrGetSnapshot)
 	}
 
 	if err = bson.Unmarshal(value, snapshot); err != nil {
-		return ErrUnmarshalSnapshot
+		log.Panic(ErrUnmarshalSnapshot)
 	}
-
-	return nil
 }
 
-func (self *leveldbStore) SaveSnapshot(key string, snapshot interface{}) error {
+func (self *leveldbStore) MustSaveSnapshot(key string, snapshot interface{}) {
 	value, err := bson.Marshal(snapshot)
 	if err != nil {
-		return ErrMarshalSnapshot
+		log.Panic(ErrMarshalSnapshot)
 	}
 
-	if err = db.Put([]byte(string), value, nil); err != nil {
-		return ErrPutSnapshot
+	if err = self.db.Put([]byte(key), value, nil); err != nil {
+		log.Panic(ErrPutSnapshot)
 	}
-
-	return nil
 }
 
-func (self *leveldbStore) Close() {
+func (self *leveldbStore) MustClose() {
 	self.db.Close()
 }
