@@ -13,7 +13,7 @@ import (
 var (
 	ErrOpenStore         error = errors.New("snapshot: couldn't open store")
 	ErrCloseStore        error = errors.New("snapshot: couldn't close store")
-	ErrDestroyStore      error = errors.New("snapshot: couldn't destory store")
+	ErrDestroyStore      error = errors.New("snapshot: couldn't destroy store")
 	ErrGetSnapshot       error = errors.New("snapshot: couldn't get the snapshot from the db")
 	ErrPutSnapshot       error = errors.New("snapshot: couldn't put the snapshot from the db")
 	ErrUnmarshalSnapshot error = errors.New("snapshot: couldn't unmarshal the snapshot")
