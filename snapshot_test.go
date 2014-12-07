@@ -18,8 +18,12 @@ func TestSnapshotStore(t *testing.T) {
 	assert.NotNil(t, store)
 	defer store.MustDestroy()
 
-	mySnapshot := &MySnapshot{}
-	store.MustLoadSnapshot("MySnapshot", mySnapshot)
-	assert.Equal(t, 0, mySnapshot.seqNum)
-	assert.Equal(t, "", mySnapshot.data)
+	mySnapshot1 := &MySnapshot{}
+	store.MustLoadSnapshot("MySnapshot", mySnapshot1)
+	assert.Equal(t, 0, mySnapshot1.seqNum)
+	assert.Equal(t, "", mySnapshot1.data)
+
+	mySnapshot1.seqNum = 1
+	mySnapshot1.data = "data 1"
+	store.MustSaveSnapshot("MySnapshot", mySnapshot1)
 }
