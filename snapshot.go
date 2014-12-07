@@ -13,6 +13,7 @@ import (
 var (
 	ErrOpenDB            error = errors.New("snapshot: couldn't open database")
 	ErrCloseDB           error = errors.New("snapshot: couldn't close database")
+	ErrDestroyDB         error = errors.New("snapshot: couldn't destory database")
 	ErrGetSnapshot       error = errors.New("snapshot: couldn't get the snapshot from the db")
 	ErrPutSnapshot       error = errors.New("snapshot: couldn't put the snapshot from the db")
 	ErrUnmarshalSnapshot error = errors.New("snapshot: couldn't unmarshal the snapshot")
@@ -74,11 +75,14 @@ func (self *leveldbStore) MustSaveSnapshot(key string, snapshot interface{}) {
 }
 
 func (self *leveldbStore) MustClose() {
-	self.db.Close()
+	if err := self.db.Close(); err != nil {
+		log.Panic(ErrCloseDB)
+	}
 }
 
 func (self *leveldbStore) MustDestroy() {
-	self.db.Close()
-	os.RemoveAll(self.dir)
-
+	self.MustClose()
+	if err := os.RemoveAll(self.dir); err != nil {
+		log.Panic(ErrDestroyDB)
+	}
 }
