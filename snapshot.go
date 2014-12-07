@@ -11,9 +11,9 @@ import (
 )
 
 var (
-	ErrOpenDB            error = errors.New("snapshot: couldn't open database")
-	ErrCloseDB           error = errors.New("snapshot: couldn't close database")
-	ErrDestroyDB         error = errors.New("snapshot: couldn't destory database")
+	ErrOpenStore         error = errors.New("snapshot: couldn't open store")
+	ErrCloseStore        error = errors.New("snapshot: couldn't close store")
+	ErrDestroyStore      error = errors.New("snapshot: couldn't destory store")
 	ErrGetSnapshot       error = errors.New("snapshot: couldn't get the snapshot from the db")
 	ErrPutSnapshot       error = errors.New("snapshot: couldn't put the snapshot from the db")
 	ErrUnmarshalSnapshot error = errors.New("snapshot: couldn't unmarshal the snapshot")
@@ -46,7 +46,7 @@ func NewLeveldbStore() Store {
 
 	db, err := leveldb.OpenFile(dir, nil)
 	if err != nil {
-		log.Panic(ErrOpenDB)
+		log.Panic(ErrOpenStore)
 	}
 
 	return &leveldbStore{dir: dir, db: db}
@@ -80,13 +80,13 @@ func (self *leveldbStore) MustSaveSnapshot(key string, snapshot interface{}) {
 
 func (self *leveldbStore) MustClose() {
 	if err := self.db.Close(); err != nil {
-		log.Panic(ErrCloseDB)
+		log.Panic(ErrCloseStore)
 	}
 }
 
 func (self *leveldbStore) MustDestroy() {
 	self.MustClose()
 	if err := os.RemoveAll(self.dir); err != nil {
-		log.Panic(ErrDestroyDB)
+		log.Panic(ErrDestroyStore)
 	}
 }
