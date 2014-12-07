@@ -7,6 +7,7 @@ import (
 	leveldbErrors "github.com/syndtr/goleveldb/leveldb/errors"
 	"labix.org/v2/mgo/bson"
 	"log"
+	"os"
 )
 
 var (
@@ -22,26 +23,32 @@ type Store interface {
 	MustLoadSnapshot(key string, snapshot interface{})
 	MustSaveSnapshot(key string, snapshot interface{})
 	MustClose()
+	MustDestroy()
 }
 
 type leveldbStoreConfig struct {
-	LeveldbDir string
+	SnapshotStore struct {
+		LeveldbDir string
+	}
 }
 
 type leveldbStore struct {
-	db *leveldb.DB
+	dir string
+	db  *leveldb.DB
 }
 
 func NewLeveldbStore() Store {
 	cfg := &leveldbStoreConfig{}
 	config.MustReadConfig(cfg)
 
-	db, err := leveldb.OpenFile(cfg.LeveldbDir, nil)
+	dir := cfg.SnapshotStore.LeveldbDir
+
+	db, err := leveldb.OpenFile(dir, nil)
 	if err != nil {
 		log.Panic(ErrOpenDB)
 	}
 
-	return &leveldbStore{db: db}
+	return &leveldbStore{dir: dir, db: db}
 }
 
 func (self *leveldbStore) MustLoadSnapshot(key string, snapshot interface{}) {
@@ -68,4 +75,10 @@ func (self *leveldbStore) MustSaveSnapshot(key string, snapshot interface{}) {
 
 func (self *leveldbStore) MustClose() {
 	self.db.Close()
+}
+
+func (self *leveldbStore) MustDestroy() {
+	self.db.Close()
+	os.RemoveAll(self.dir)
+
 }
