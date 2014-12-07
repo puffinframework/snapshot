@@ -8,8 +8,8 @@ import (
 )
 
 type MySnapshot struct {
-	seqNum int64
-	data   string
+	SeqNum int64
+	Data   string
 }
 
 func TestSnapshotStore(t *testing.T) {
@@ -20,10 +20,14 @@ func TestSnapshotStore(t *testing.T) {
 
 	mySnapshot1 := &MySnapshot{}
 	store.MustLoadSnapshot("MySnapshot", mySnapshot1)
-	assert.Equal(t, 0, mySnapshot1.seqNum)
-	assert.Equal(t, "", mySnapshot1.data)
+	assert.Equal(t, 0, mySnapshot1.SeqNum)
+	assert.Equal(t, "", mySnapshot1.Data)
 
-	mySnapshot1.seqNum = 1
-	mySnapshot1.data = "data 1"
+	mySnapshot1.SeqNum = 1
+	mySnapshot1.Data = "data 1"
 	store.MustSaveSnapshot("MySnapshot", mySnapshot1)
+
+	mySnapshot2 := &MySnapshot{}
+	store.MustLoadSnapshot("MySnapshot", mySnapshot2)
+	assert.Equal(t, mySnapshot1, mySnapshot2)
 }
