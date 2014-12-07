@@ -54,8 +54,12 @@ func NewLeveldbStore() Store {
 
 func (self *leveldbStore) MustLoadSnapshot(key string, snapshot interface{}) {
 	value, err := self.db.Get([]byte(key), nil)
-	if err != nil && err != leveldbErrors.ErrNotFound {
-		log.Panic(ErrGetSnapshot)
+	if err != nil {
+		if err == leveldbErrors.ErrNotFound {
+			return
+		} else {
+			log.Panic(ErrGetSnapshot)
+		}
 	}
 
 	if err = bson.Unmarshal(value, snapshot); err != nil {
