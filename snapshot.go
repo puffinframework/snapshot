@@ -46,6 +46,7 @@ func NewLeveldbStore() Store {
 
 	db, err := leveldb.OpenFile(dir, nil)
 	if err != nil {
+		log.Println(err)
 		log.Panic(ErrOpenStore)
 	}
 
@@ -58,11 +59,13 @@ func (self *leveldbStore) MustLoadSnapshot(key string, snapshot interface{}) {
 		if err == leveldbErrors.ErrNotFound {
 			return
 		} else {
+			log.Println(err)
 			log.Panic(ErrGetSnapshot)
 		}
 	}
 
 	if err = bson.Unmarshal(value, snapshot); err != nil {
+		log.Println(err)
 		log.Panic(ErrUnmarshalSnapshot)
 	}
 }
@@ -70,16 +73,19 @@ func (self *leveldbStore) MustLoadSnapshot(key string, snapshot interface{}) {
 func (self *leveldbStore) MustSaveSnapshot(key string, snapshot interface{}) {
 	value, err := bson.Marshal(snapshot)
 	if err != nil {
+		log.Println(err)
 		log.Panic(ErrMarshalSnapshot)
 	}
 
 	if err = self.db.Put([]byte(key), value, nil); err != nil {
+		log.Println(err)
 		log.Panic(ErrPutSnapshot)
 	}
 }
 
 func (self *leveldbStore) MustClose() {
 	if err := self.db.Close(); err != nil {
+		log.Println(err)
 		log.Panic(ErrCloseStore)
 	}
 }
@@ -87,6 +93,7 @@ func (self *leveldbStore) MustClose() {
 func (self *leveldbStore) MustDestroy() {
 	self.MustClose()
 	if err := os.RemoveAll(self.dir); err != nil {
+		log.Println(err)
 		log.Panic(ErrDestroyStore)
 	}
 }
