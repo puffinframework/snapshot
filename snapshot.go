@@ -11,13 +11,13 @@ import (
 )
 
 var (
-	ErrOpenStore         error = errors.New("snapshot: couldn't open store")
-	ErrCloseStore        error = errors.New("snapshot: couldn't close store")
-	ErrDestroyStore      error = errors.New("snapshot: couldn't destroy store")
-	ErrGetSnapshot       error = errors.New("snapshot: couldn't get the snapshot from the db")
-	ErrPutSnapshot       error = errors.New("snapshot: couldn't put the snapshot from the db")
-	ErrUnmarshalSnapshot error = errors.New("snapshot: couldn't unmarshal the snapshot")
+	ErrOpenStore         error = errors.New("snapshot: couldn't open the store")
+	ErrCloseStore        error = errors.New("snapshot: couldn't close the store")
+	ErrDestroyStore      error = errors.New("snapshot: couldn't destroy the store")
+	ErrGetSnapshot       error = errors.New("snapshot: couldn't get the snapshot from the store")
+	ErrPutSnapshot       error = errors.New("snapshot: couldn't put the snapshot from the store")
 	ErrMarshalSnapshot   error = errors.New("snapshot: couldn't marshal the snapshot")
+	ErrUnmarshalSnapshot error = errors.New("snapshot: couldn't unmarshal the snapshot")
 )
 
 type Store interface {
