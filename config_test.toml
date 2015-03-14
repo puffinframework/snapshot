@@ -1,2 +1,0 @@
-[SnapshotStore]
-LeveldbDir = "test-snapshot-store"
