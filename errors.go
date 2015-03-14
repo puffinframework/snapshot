@@ -1,6 +1,6 @@
 package snapshot
 
-import(
+import (
 	"errors"
 )
 
