@@ -1,31 +1,20 @@
 package snapshot
 
 import (
-	"github.com/puffinframework/config"
+	"log"
+	"os"
+
 	"github.com/syndtr/goleveldb/leveldb"
 	leveldbErrors "github.com/syndtr/goleveldb/leveldb/errors"
 	"labix.org/v2/mgo/bson"
-	"log"
-	"os"
 )
-
-type leveldbStoreConfig struct {
-	SnapshotStore struct {
-		LeveldbDir string
-	}
-}
 
 type leveldbStore struct {
 	dir string
 	db  *leveldb.DB
 }
 
-func NewLeveldbStore() Store {
-	cfg := &leveldbStoreConfig{}
-	config.MustReadConfig(cfg)
-
-	dir := cfg.SnapshotStore.LeveldbDir
-
+func NewLeveldbStore(dir string) Store {
 	db, err := leveldb.OpenFile(dir, nil)
 	if err != nil {
 		log.Println(err)

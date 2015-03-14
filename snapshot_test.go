@@ -1,11 +1,11 @@
 package snapshot_test
 
 import (
-	"github.com/puffinframework/config"
-	"github.com/puffinframework/snapshot"
-	"github.com/stretchr/testify/assert"
-	"os"
 	"testing"
+
+	"github.com/puffinframework/snapshot"
+
+	"github.com/stretchr/testify/assert"
 )
 
 type MySnapshot struct {
@@ -14,8 +14,7 @@ type MySnapshot struct {
 }
 
 func TestSnapshotStore(t *testing.T) {
-	os.Setenv(config.ENV_VAR_NAME, config.MODE_TEST)
-	store := snapshot.NewLeveldbStore()
+	store := snapshot.NewLeveldbStore("test-snapshot-store")
 	assert.NotNil(t, store)
 	defer store.MustDestroy()
 
