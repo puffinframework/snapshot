@@ -5,7 +5,7 @@ import (
 	"os"
 
 	"github.com/syndtr/goleveldb/leveldb"
-	leveldbErrors "github.com/syndtr/goleveldb/leveldb/errors"
+	"github.com/syndtr/goleveldb/leveldb/errors"
 	"labix.org/v2/mgo/bson"
 )
 
@@ -27,7 +27,7 @@ func NewLeveldbStore(dir string) Store {
 func (self *leveldbStore) MustLoadSnapshot(key string, snapshot interface{}) {
 	value, err := self.db.Get([]byte(key), nil)
 	if err != nil {
-		if err == leveldbErrors.ErrNotFound {
+		if err == errors.ErrNotFound {
 			return
 		} else {
 			log.Println(err)
