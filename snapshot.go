@@ -9,14 +9,6 @@ import (
 	"os"
 )
 
-
-type Store interface {
-	MustLoadSnapshot(key string, snapshot interface{})
-	MustSaveSnapshot(key string, snapshot interface{})
-	MustClose()
-	MustDestroy()
-}
-
 type leveldbStoreConfig struct {
 	SnapshotStore struct {
 		LeveldbDir string
