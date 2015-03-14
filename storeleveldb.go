@@ -9,7 +9,7 @@ import (
 	"labix.org/v2/mgo/bson"
 )
 
-type leveldbStore struct {
+type storeLeveldb struct {
 	dir string
 	db  *leveldb.DB
 }
@@ -21,10 +21,10 @@ func NewLeveldbStore(dir string) Store {
 		log.Panic(ErrOpenStore)
 	}
 
-	return &leveldbStore{dir: dir, db: db}
+	return &storeLeveldb{dir: dir, db: db}
 }
 
-func (self *leveldbStore) MustLoadSnapshot(key string, snapshot interface{}) {
+func (self *storeLeveldb) MustLoadSnapshot(key string, snapshot interface{}) {
 	value, err := self.db.Get([]byte(key), nil)
 	if err != nil {
 		if err == errors.ErrNotFound {
@@ -41,7 +41,7 @@ func (self *leveldbStore) MustLoadSnapshot(key string, snapshot interface{}) {
 	}
 }
 
-func (self *leveldbStore) MustSaveSnapshot(key string, snapshot interface{}) {
+func (self *storeLeveldb) MustSaveSnapshot(key string, snapshot interface{}) {
 	value, err := bson.Marshal(snapshot)
 	if err != nil {
 		log.Println(err)
@@ -54,14 +54,14 @@ func (self *leveldbStore) MustSaveSnapshot(key string, snapshot interface{}) {
 	}
 }
 
-func (self *leveldbStore) MustClose() {
+func (self *storeLeveldb) MustClose() {
 	if err := self.db.Close(); err != nil {
 		log.Println(err)
 		log.Panic(ErrCloseStore)
 	}
 }
 
-func (self *leveldbStore) MustDestroy() {
+func (self *storeLeveldb) MustDestroy() {
 	self.MustClose()
 	if err := os.RemoveAll(self.dir); err != nil {
 		log.Println(err)
