@@ -4,7 +4,7 @@ import (
 	"time"
 )
 
-type Snapshot interface {
+type Data interface {
 	LoadFrom(ss Store)
 	SaveTo(ss Store)
 	GetLastEventDt() time.Time
