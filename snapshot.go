@@ -5,8 +5,8 @@ import (
 )
 
 type Snapshot interface {
-	Load()
-	Save()
+	LoadFrom(ss Store)
+	SaveTo(ss Store)
 	GetLastEventDt() time.Time
 	SetLastEventDt(lastEventDt time.Time)
 }
