@@ -5,8 +5,8 @@ import (
 )
 
 type Data interface {
-	LoadFrom(ss Store)
-	SaveTo(ss Store)
-	GetLastEventDt() time.Time
-	SetLastEventDt(lastEventDt time.Time)
+	LoadFrom(ss Store) error
+	SaveTo(ss Store) error
+	GetLastEventDt() (time.Time, error)
+	SetLastEventDt(lastEventDt time.Time) error
 }
